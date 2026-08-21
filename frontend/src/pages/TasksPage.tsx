@@ -17,7 +17,6 @@ import { ViewToggle, type View } from '@/components/organisation/ViewToggle'
 import { OrganisationKanban } from '@/components/organisation/OrganisationKanban'
 import { OrganisationChart } from '@/components/organisation/OrganisationChart'
 import { api } from '@/services/api'
-import { useAuth } from '@/context/AuthContext'
 import type { Task, TaskListResponse } from '@/types/task'
 import type { User } from '@/services/api'
 
@@ -32,7 +31,6 @@ function readSavedView(): View {
 }
 
 export function TasksPage() {
-  const { user } = useAuth()
   const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const [view, setView] = useState<View>(readSavedView)
@@ -58,8 +56,6 @@ export function TasksPage() {
     }),
     [params],
   )
-
-  const canDelete = user?.role === 'admin' || user?.role === 'manager'
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, view)
@@ -260,11 +256,9 @@ export function TasksPage() {
                           >
                             Edit
                           </Button>
-                          {canDelete ? (
-                            <Button variant="ghost" type="button" onClick={() => setDeleting(task)}>
-                              Delete
-                            </Button>
-                          ) : null}
+                          <Button variant="ghost" type="button" onClick={() => setDeleting(task)}>
+                            Delete
+                          </Button>
                         </div>
                       </td>
                     </tr>

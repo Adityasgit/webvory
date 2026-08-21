@@ -21,7 +21,8 @@ export function OrganisationTable({ search }: { search: string }) {
   const [members, setMembers] = useState<OrgMember[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const canManage = user?.role === 'admin' || user?.role === 'manager'
+  // Demo: any logged-in user can reassign managers.
+  const canManage = Boolean(user)
 
   async function load() {
     setLoading(true)

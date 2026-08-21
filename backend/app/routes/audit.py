@@ -5,8 +5,8 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.models import AuditLog, User, UserRole
-from app.utils.rbac import require_roles
+from app.deps import CurrentUser
+from app.models import AuditLog
 
 router = APIRouter(prefix="/api/audit", tags=["audit"])
 
@@ -26,6 +26,6 @@ class AuditOut(BaseModel):
 @router.get("", response_model=list[AuditOut])
 def list_audit(
     db: Annotated[Session, Depends(get_db)],
-    _admin: Annotated[User, Depends(require_roles(UserRole.admin))],
+    _user: CurrentUser,
 ) -> list[AuditLog]:
     return db.query(AuditLog).order_by(AuditLog.created_at.desc()).limit(100).all()

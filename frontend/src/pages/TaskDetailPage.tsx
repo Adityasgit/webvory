@@ -11,7 +11,6 @@ import {
 } from '@/components/ui'
 import { TaskFormModal } from '@/components/tasks/TaskFormModal'
 import { api } from '@/services/api'
-import { useAuth } from '@/context/AuthContext'
 import type { Task } from '@/types/task'
 
 type Comment = {
@@ -32,7 +31,6 @@ type Activity = {
 export function TaskDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { user } = useAuth()
   const [task, setTask] = useState<Task | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [activity, setActivity] = useState<Activity[]>([])
@@ -43,8 +41,6 @@ export function TaskDetailPage() {
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState('')
   const [posting, setPosting] = useState(false)
-
-  const canDelete = user?.role === 'admin' || user?.role === 'manager'
 
   const load = useCallback(async () => {
     if (!id) return
@@ -132,11 +128,9 @@ export function TaskDetailPage() {
           <Button type="button" variant="secondary" onClick={() => setEditOpen(true)}>
             Edit
           </Button>
-          {canDelete ? (
-            <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
-              Delete
-            </Button>
-          ) : null}
+          <Button type="button" variant="danger" onClick={() => setDeleteOpen(true)}>
+            Delete
+          </Button>
         </div>
       </div>
 

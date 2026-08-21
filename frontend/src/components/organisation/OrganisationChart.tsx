@@ -207,7 +207,8 @@ export function OrganisationChart({ search }: { search: string }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
-  const canManage = user?.role === 'admin' || user?.role === 'manager'
+  // Demo: any logged-in user can edit hierarchy / assign tasks.
+  const canManage = Boolean(user)
 
   const showToast = useCallback((msg: string) => {
     setToast(msg)
@@ -367,10 +368,7 @@ export function OrganisationChart({ search }: { search: string }) {
   const onEdgeClick = useCallback(
     (event: ReactMouseEvent, edge: Edge) => {
       event.stopPropagation()
-      if (!canManage) {
-        showToast('Only admin/manager can change reporting links')
-        return
-      }
+      if (!canManage) return
 
       const isTaskEdge = edge.target.startsWith('task-') || edge.id.includes('-task-')
       if (isTaskEdge) {
@@ -424,10 +422,7 @@ export function OrganisationChart({ search }: { search: string }) {
 
   const onConnect = useCallback(
     async (connection: Connection) => {
-      if (!canManage) {
-        showToast('Only admin/manager can change reporting links')
-        return
-      }
+      if (!canManage) return
       const sourceId = connection.source
       const targetId = connection.target
       if (!sourceId || !targetId) return
@@ -535,15 +530,9 @@ export function OrganisationChart({ search }: { search: string }) {
             style={{ background: 'var(--bg-elevated)' }}
           />
         </ReactFlow>
-        {canManage ? (
-          <p className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-md bg-[var(--surface)]/90 px-2 py-1 text-[10px] text-[var(--text-muted)]">
-            Drag bottom handle → top handle to link · click an edge to disconnect · or drag onto a manager
-          </p>
-        ) : (
-          <p className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-md bg-[var(--surface)]/90 px-2 py-1 text-[10px] text-[var(--text-muted)]">
-            View only — admin/manager can edit reporting links
-          </p>
-        )}
+        <p className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-md bg-[var(--surface)]/90 px-2 py-1 text-[10px] text-[var(--text-muted)]">
+          Drag bottom handle → top handle to link · click an edge to disconnect · or drag onto a manager
+        </p>
       </div>
 
       <aside className="surface p-4">

@@ -57,10 +57,9 @@ export function OrganisationKanban({ search }: { search: string }) {
 
   const activeTask = filtered.find((t) => t.id === activeId)
 
-  function canDrag(task: Task) {
-    if (!user) return false
-    if (user.role === 'admin' || user.role === 'manager') return true
-    return task.created_by === user.id || task.assigned_to === user.id
+  function canDrag(_task: Task) {
+    // Demo: any logged-in user can move any task.
+    return Boolean(user)
   }
 
   function onDragStart(e: DragStartEvent) {

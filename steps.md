@@ -73,25 +73,27 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 1.1 Alembic
 
-- [ ] Init Alembic; wire `DATABASE_URL`
-- [ ] Migration: `users`, `tasks`, `comments`
-- [ ] Migration: `attachments`, `activity_events`, `notifications`, `audit_logs`
-- [ ] Enums: role, status, priority, notification_type
-- [ ] `users.reporting_manager_id` self-FK + `job_title`
-- [ ] Indexes on `tasks.status`, `tasks.assigned_to`, `users.reporting_manager_id`
+- [x] Init Alembic; wire `DATABASE_URL`
+- [x] Migration: `users`, `tasks`, `comments`
+- [x] Migration: `attachments`, `activity_events`, `notifications`, `audit_logs`
+- [x] Enums: role, status, priority, notification_type
+- [x] `users.reporting_manager_id` self-FK + `job_title`
+- [x] Indexes on `tasks.status`, `tasks.assigned_to`, `users.reporting_manager_id`
 
 ### 1.2 Models & repositories
 
-- [ ] SQLAlchemy models matching requirement §8
-- [ ] Repository stubs: `user_repo`, `task_repo`, `comment_repo` (others later)
-- [ ] Soft delete field on tasks (`is_deleted`)
+- [x] SQLAlchemy models matching requirement §8
+- [x] Repository stubs: `user_repo`, `task_repo`, `comment_repo` (others later)
+- [x] Soft delete field on tasks (`is_deleted`)
 
 ### 1.3 Seed
 
-- [ ] Seed script: sample tasks/comments; optional demo reporting hierarchy among seeded/mapped emails
-- [ ] Document: first Google login → `admin` if no admin exists
+- [x] Seed script: sample tasks/comments; optional demo reporting hierarchy among seeded/mapped emails
+- [x] Document: first Google login → `admin` if no admin exists
 
-**Exit criteria:** `alembic upgrade head` succeeds; seed runs without crash.
+**Exit criteria:** `alembic upgrade head` succeeds; seed runs without crash. ✅
+
+**Local DB note:** Prefer `docker compose up -d db`. If the Postgres image cannot be pulled, a local PostgreSQL 17 install works with `DATABASE_URL=postgresql+psycopg://webvory:webvory@localhost:5432/webvory` (create role/db once).
 
 ---
 
@@ -101,14 +103,14 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 2.1 Backend auth
 
-- [ ] `GET /api/auth/google` → redirect to Google
-- [ ] `GET /api/auth/google/callback` → upsert user by `google_sub`/email → set httpOnly JWT cookie → redirect `FRONTEND_URL/dashboard`
-- [ ] First user (or no admin yet) → role `admin`; else `member`
-- [ ] `GET /api/auth/me`
-- [ ] `POST /api/auth/logout` clears cookie
-- [ ] Auth dependency: read cookie, verify JWT, load user
-- [ ] RBAC helpers: `require_roles`, resource checks per requirement §10
-- [ ] Write `audit_logs` on login and role changes
+- [x] `GET /api/auth/google` → redirect to Google
+- [x] `GET /api/auth/google/callback` → upsert user by `google_sub`/email → set httpOnly JWT cookie → redirect `FRONTEND_URL/dashboard`
+- [x] First user (or no admin yet) → role `admin`; else `member`
+- [x] `GET /api/auth/me`
+- [x] `POST /api/auth/logout` clears cookie
+- [x] Auth dependency: read cookie, verify JWT, load user
+- [x] RBAC helpers: `require_roles`, resource checks per requirement §10
+- [x] Write `audit_logs` on login and role changes
 
 ### 2.2 Google Cloud setup (manual)
 
@@ -119,13 +121,15 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 2.3 Frontend auth
 
-- [ ] `AuthContext` / provider: load `/api/auth/me` with `credentials: 'include'`
-- [ ] API client wrapper (fetch/axios) with credentials; global 401 → `/login`
-- [ ] `/login` page: brand + “Continue with Google” only (screens §4.1)
-- [ ] Protected route wrapper for app shell
-- [ ] Logout action
+- [x] `AuthContext` / provider: load `/api/auth/me` with `credentials: 'include'`
+- [x] API client wrapper (fetch/axios) with credentials; global 401 → `/login`
+- [x] `/login` page: brand + “Continue with Google” only (screens §4.1)
+- [x] Protected route wrapper for app shell
+- [x] Logout action
 
 **Exit criteria:** Full Google login → cookie → dashboard redirect → `/me` hydrates; logout works; no password UI.
+
+**Setup:** Copy `backend/.env.example` → `backend/.env` and fill `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`. Without them, `/api/auth/google` returns 503.
 
 ---
 
@@ -135,36 +139,36 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 3.1 Backend tasks
 
-- [ ] Schemas: create, update, list filters, response
-- [ ] `GET /api/tasks` — `status`, `priority`, `assignee`, `search`, `sort`, `page`, `limit` (server-side)
-- [ ] `GET /api/tasks/{id}`
-- [ ] `POST /api/tasks`
-- [ ] `PUT /api/tasks/{id}` (status change used later by Kanban)
-- [ ] `DELETE /api/tasks/{id}` (soft delete)
-- [ ] RBAC: member edit own created/assigned only; manager/admin any; delete manager/admin only
-- [ ] On create/update: append `activity_events`
+- [x] Schemas: create, update, list filters, response
+- [x] `GET /api/tasks` — `status`, `priority`, `assignee`, `search`, `sort`, `page`, `limit` (server-side)
+- [x] `GET /api/tasks/{id}`
+- [x] `POST /api/tasks`
+- [x] `PUT /api/tasks/{id}` (status change used later by Kanban)
+- [x] `DELETE /api/tasks/{id}` (soft delete)
+- [x] RBAC: member edit own created/assigned only; manager/admin any; delete manager/admin only
+- [x] On create/update: append `activity_events`
 
 ### 3.2 Frontend reusable UI (minimum set)
 
-- [ ] Button, Input, Select, Modal, Table, Pagination
-- [ ] StatusBadge, PriorityBadge, TaskCard
-- [ ] LoadingSpinner, EmptyState, ConfirmDialog
-- [ ] Design tokens / CSS variables (screens §7) + dark class hook (toggle later)
+- [x] Button, Input, Select, Modal, Table, Pagination
+- [x] StatusBadge, PriorityBadge, TaskCard
+- [x] LoadingSpinner, EmptyState, ConfirmDialog
+- [x] Design tokens / CSS variables (screens §7) + dark class hook (toggle later)
 
 ### 3.3 App shell
 
-- [ ] Sidebar + TopBar per screens §3
-- [ ] Routes: `/dashboard` (stub), `/tasks`, `/tasks/:id`, `/organisation` (stub), `/users` (stub), `/insights` (stub), `/profile` (stub)
+- [x] Sidebar + TopBar per screens §3
+- [x] Routes: `/dashboard` (stub), `/tasks`, `/tasks/:id`, `/organisation` (stub), `/users` (stub), `/insights` (stub), `/profile` (stub)
 
 ### 3.4 Tasks pages
 
-- [ ] `/tasks` list: search, filters, sort, pagination, URL query sync
-- [ ] Create/Edit modal
-- [ ] Confirm delete
-- [ ] `/tasks/:id` detail: view + update fields
-- [ ] Loading / empty / error states
+- [x] `/tasks` list: search, filters, sort, pagination, URL query sync
+- [x] Create/Edit modal
+- [x] Confirm delete
+- [x] `/tasks/:id` detail: view + update fields
+- [x] Loading / empty / error states
 
-**Exit criteria:** Authenticated user can CRUD tasks end-to-end with filters and pagination.
+**Exit criteria:** Authenticated user can CRUD tasks end-to-end with filters and pagination. ✅
 
 ---
 
@@ -174,18 +178,18 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 4.1 Dashboard API/UI
 
-- [ ] `GET /api/dashboard` — total, pending, in_progress, completed, overdue, my tasks
-- [ ] Dashboard page: six stat cards + my tasks + overdue strip
-- [ ] “New task” CTA → create modal
+- [x] `GET /api/dashboard` — total, pending, in_progress, completed, overdue, my tasks
+- [x] Dashboard page: six stat cards + my tasks + overdue strip
+- [x] “New task” CTA → create modal
 
 ### 4.2 Comments
 
-- [ ] `GET/POST /api/tasks/{id}/comments`
-- [ ] Comment list + composer on detail page
-- [ ] Activity feed section (from `activity_events`) on detail
-- [ ] Notify assignee on comment (queue for Phase 7 if needed; stub OK)
+- [x] `GET/POST /api/tasks/{id}/comments`
+- [x] Comment list + composer on detail page
+- [x] Activity feed section (from `activity_events`) on detail
+- [x] Notify assignee on comment (queue for Phase 7 if needed; stub OK)
 
-**Exit criteria:** Dashboard numbers match DB; comments persist and show on detail.
+**Exit criteria:** Dashboard numbers match DB; comments persist and show on detail. ✅
 
 ---
 
@@ -195,46 +199,46 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 5.0 Shared shell
 
-- [ ] `ViewToggle` component: Table | Kanban | Chart
-- [ ] Persist `organisation.view` in `localStorage`
-- [ ] Page header + New task; mount only the active view (lazy OK)
+- [x] `ViewToggle` component: Table | Kanban | Chart
+- [x] Persist `organisation.view` in `localStorage`
+- [x] Page header + New task; mount only the active view (lazy OK)
 
 ### 5.1 Backend hierarchy
 
-- [ ] Port cycle check (`wouldCreateCycle`) into Python util
-- [ ] `GET /api/organization/tree` — nested users + optional tasks for chart
-- [ ] `PATCH /api/users/{id}/manager` — set/clear manager; 400 on cycle; RBAC admin/manager
-- [ ] `GET /api/users/{id}/reportees`
-- [ ] Extend `GET /api/users` with manager name, report counts, open task counts for Table view
+- [x] Port cycle check (`wouldCreateCycle`) into Python util
+- [x] `GET /api/organization/tree` — nested users + optional tasks for chart
+- [x] `PATCH /api/users/{id}/manager` — set/clear manager; 400 on cycle; RBAC admin/manager
+- [x] `GET /api/users/{id}/reportees`
+- [x] Extend `GET /api/users` with manager name, report counts, open task counts for Table view
 
 ### 5.2 Table view
 
-- [ ] Members table: name, email, role, manager, reports, open tasks
-- [ ] Person sheet: set manager (admin/manager), link to tasks
-- [ ] Loading / empty / error
+- [x] Members table: name, email, role, manager, reports, open tasks
+- [x] Person sheet: set manager (admin/manager), link to tasks
+- [x] Loading / empty / error
 
 ### 5.3 Kanban view
 
-- [ ] Port PlayStack Kanban Board/Column/Card conceptually
-- [ ] Columns: `pending` | `in_progress` | `completed` | `blocked`
-- [ ] `@dnd-kit` DragOverlay; optimistic `PUT /api/tasks/{id}` status
-- [ ] Card click → `/tasks/:id`; RBAC-disable drag
-- [ ] Empty/loading states; horizontal scroll on mobile
+- [x] Port PlayStack Kanban Board/Column/Card conceptually
+- [x] Columns: `pending` | `in_progress` | `completed` | `blocked`
+- [x] `@dnd-kit` DragOverlay; optimistic `PUT /api/tasks/{id}` status
+- [x] Card click → `/tasks/:id`; RBAC-disable drag
+- [x] Empty/loading states; horizontal scroll on mobile
 
 ### 5.4 Chart view
 
-- [ ] Dependencies: `@xyflow/react`, `@dagrejs/dagre`
-- [ ] Port OrgChart layout: person nodes, optional task nodes, detail panel
-- [ ] Drag-to-reassign manager; edge break with confirm; cycle toast
-- [ ] Members: read-only pan/zoom
-- [ ] WS/refetch when manager or assignments change
+- [x] Dependencies: `@xyflow/react`, `@dagrejs/dagre`
+- [x] Port OrgChart layout: person nodes, optional task nodes, detail panel
+- [x] Drag-to-reassign manager; edge break with confirm; cycle toast
+- [x] Members: read-only pan/zoom
+- [x] WS/refetch when manager or assignments change
 
 ### 5.5 Polish
 
-- [ ] Shared search highlighting across views where cheap
-- [ ] Dark mode contrast on nodes and columns
+- [x] Shared search highlighting across views where cheap
+- [x] Dark mode contrast on nodes and columns
 
-**Exit criteria:** Toggle switches all three views; Kanban status persists; Chart manager assign survives refresh and rejects cycles; Table shows hierarchy fields.
+**Exit criteria:** Toggle switches all three views; Kanban status persists; Chart manager assign survives refresh and rejects cycles; Table shows hierarchy fields. ✅
 
 ---
 
@@ -244,23 +248,23 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 6.1 Users
 
-- [ ] `GET /api/users`
-- [ ] `PATCH /api/users/{id}/role` (admin only) + audit log
-- [ ] `/users` page: list; admin role Select
+- [x] `GET /api/users`
+- [x] `PATCH /api/users/{id}/role` (admin only) + audit log
+- [x] `/users` page: list; admin role Select
 
 ### 6.2 External API (Insights)
 
-- [ ] Backend `GET /api/external/posts` → JSONPlaceholder with 5s timeout, error handling, optional short TTL cache
-- [ ] `/insights` page: list + Retry
-- [ ] Optional dashboard teaser widget
+- [x] Backend `GET /api/external/posts` → JSONPlaceholder with 5s timeout, error handling, optional short TTL cache
+- [x] `/insights` page: list + Retry
+- [x] Optional dashboard teaser widget
 
 ### 6.3 Profile & theme
 
-- [ ] `/profile`: Google avatar, name, email, role; logout
-- [ ] Dark mode toggle (persist `localStorage` or user pref); Tailwind `dark` class
-- [ ] Top bar theme control
+- [x] `/profile`: Google avatar, name, email, role; logout
+- [x] Dark mode toggle (persist `localStorage` or user pref); Tailwind `dark` class
+- [x] Top bar theme control
 
-**Exit criteria:** All primary nav routes usable; Insights shows proxied data or clear error.
+**Exit criteria:** All primary nav routes usable; Insights shows proxied data or clear error. ✅
 
 ---
 
@@ -270,39 +274,39 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 7.1 Attachments
 
-- [ ] Multipart upload endpoints; store under `uploads/` (volume later)
-- [ ] Validate size/type; list/delete on task detail
-- [ ] Confirm before delete
+- [x] Multipart upload endpoints; store under `uploads/` (volume later)
+- [x] Validate size/type; list/delete on task detail
+- [x] Confirm before delete
 
 ### 7.2 Notifications
 
-- [ ] Create notifications on assign / status change / comment
-- [ ] `GET /api/notifications`, mark read / read-all
-- [ ] Top-bar bell + NotificationDrawer
-- [ ] Unread badge
+- [x] Create notifications on assign / status change / comment
+- [x] `GET /api/notifications`, mark read / read-all
+- [x] Top-bar bell + NotificationDrawer
+- [x] Unread badge
 
 ### 7.3 WebSockets
 
-- [ ] `WS /api/ws` authenticated
-- [ ] Emit `task.updated`, `task.created`, `notification.created`
-- [ ] Frontend subscribe; invalidate/refetch Organisation (active view) + Tasks + notifications
+- [x] `WS /api/ws` authenticated
+- [x] Emit `task.updated`, `task.created`, `notification.created`
+- [x] Frontend subscribe; invalidate/refetch Organisation (active view) + Tasks + notifications
 
 ### 7.4 Background jobs
 
-- [ ] Scheduler: overdue / due-soon notifications (daily or hourly)
-- [ ] Document job in README
+- [x] Scheduler: overdue / due-soon notifications (daily or hourly)
+- [x] Document job in README
 
 ### 7.5 Audit
 
-- [ ] Ensure role change, delete task, login write audit rows
-- [ ] Optional admin-only list endpoint (UI optional)
+- [x] Ensure role change, delete task, login write audit rows
+- [x] Optional admin-only list endpoint (UI optional)
 
 ### 7.6 OpenAPI
 
-- [ ] Confirm FastAPI `/docs` covers all routes with schemas
-- [ ] Tag routes (auth, tasks, users, etc.)
+- [x] Confirm FastAPI `/docs` covers all routes with schemas
+- [x] Tag routes (auth, tasks, users, etc.)
 
-**Exit criteria:** Bonus checklist in requirement §7 can be marked done with demos.
+**Exit criteria:** Bonus checklist in requirement §7 can be marked done with demos. ✅
 
 ---
 
@@ -312,35 +316,35 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ### 8.1 Docker
 
-- [ ] `docker-compose.yml`: Postgres, backend, frontend
-- [ ] Backend Dockerfile; frontend Dockerfile (or nginx serve build)
-- [ ] Volume for uploads + Postgres data
-- [ ] Document one-command up
+- [x] `docker-compose.yml`: Postgres, backend, frontend
+- [x] Backend Dockerfile; frontend Dockerfile (or nginx serve build)
+- [x] Volume for uploads + Postgres data
+- [x] Document one-command up
 
 ### 8.2 Tests
 
-- [ ] Backend pytest: auth mocks, task CRUD, RBAC, manager cycle rejection, dashboard, external timeout
-- [ ] Frontend: unit test badges/utils or one component smoke (optional but preferred)
-- [ ] `npm test` / `pytest` documented in README
+- [x] Backend pytest: auth mocks, task CRUD, RBAC, manager cycle rejection, dashboard, external timeout
+- [x] Frontend: unit test badges/utils or one component smoke (optional but preferred)
+- [x] `npm test` / `pytest` documented in README
 
 ### 8.3 README
 
-- [ ] Overview, tech stack, architecture sketch
-- [ ] Setup: env vars, Google OAuth console steps, DB migrate, seed
-- [ ] Run FE, run BE, Docker
-- [ ] API docs link (`/docs`)
-- [ ] Assumptions (first user admin, Organisation = Table/Kanban/Chart, OAuth-only)
-- [ ] Screenshots placeholders or real captures
+- [x] Overview, tech stack, architecture sketch
+- [x] Setup: env vars, Google OAuth console steps, DB migrate, seed
+- [x] Run FE, run BE, Docker
+- [x] API docs link (`/docs`)
+- [x] Assumptions (first user admin, Organisation = Table/Kanban/Chart, OAuth-only)
+- [x] Screenshots placeholders or real captures
 
 ### 8.4 Final QA pass
 
-- [ ] Walk screens.md acceptance checklist (§9)
-- [ ] Walk requirement success criteria (§1)
-- [ ] Responsive smoke: 375px and desktop
-- [ ] Confirm no email/password paths remain
-- [ ] Confirm Organisation has Table + Kanban + Chart toggle (not employee Active/Inactive board)
+- [x] Walk screens.md acceptance checklist (§9)
+- [x] Walk requirement success criteria (§1)
+- [x] Responsive smoke: 375px and desktop
+- [x] Confirm no email/password paths remain
+- [x] Confirm Organisation has Table + Kanban + Chart toggle (not employee Active/Inactive board)
 
-**Exit criteria:** Fresh clone + env + Docker (or local) can demo the full assignment.
+**Exit criteria:** Fresh clone + env + Docker (or local) can demo the full assignment. ✅
 
 ---
 

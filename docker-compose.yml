@@ -17,5 +17,34 @@ services:
       timeout: 5s
       retries: 10
 
+  backend:
+    build: ./backend
+    container_name: webvory-api
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://webvory:webvory@db:5432/webvory
+      FRONTEND_URL: http://localhost:3000
+      BACKEND_URL: http://localhost:8000
+      GOOGLE_REDIRECT_URI: http://localhost:8000/api/auth/google/callback
+    ports:
+      - "8000:8000"
+    volumes:
+      - webvory_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: webvory-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
 volumes:
   webvory_pgdata:
+  webvory_uploads:

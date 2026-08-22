@@ -56,11 +56,10 @@ const OrgPersonNode = memo(function OrgPersonNode({ data, selected, isConnectabl
 
   return (
     <div
-      className={`w-[240px] rounded-xl border px-4 py-3 shadow-[var(--shadow-soft)] transition-all ${
-        selected
+      className={`w-[240px] rounded-xl border px-4 py-3 shadow-[var(--shadow-soft)] transition-all ${selected
           ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/40'
           : 'border-[var(--border)] hover:border-[var(--accent)]/50'
-      } bg-[var(--surface)] text-[var(--text)]`}
+        } bg-[var(--surface)] text-[var(--text)]`}
     >
       <Handle
         type="target"
@@ -553,7 +552,7 @@ export function OrganisationChart({ search }: { search: string }) {
                   value={selected.reporting_manager_id ?? ''}
                   onChange={(e) => void assignManagerFromPanel(selected.id, e.target.value)}
                 >
-                  <option value="">— Root —</option>
+                  <option value="">Root —</option>
                   {allPeople
                     .filter((p) => p.id !== selected.id)
                     .filter((p) => !wouldCreateCycle(allPeople, selected.id, p.id))

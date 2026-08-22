@@ -144,7 +144,7 @@ a {
   stroke: var(--accent);
 }
 
-/* Handles are pointer-events:none until .connectionindicator — keep them grabable & visible */
+/* Handles are pointer-events:none until .connectionindicator keep them grabable & visible */
 .react-flow__handle {
   z-index: 12;
 }
@@ -182,6 +182,7 @@ a {
     transform: translateX(100%);
     opacity: 0.6;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -193,6 +194,7 @@ a {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -207,7 +209,7 @@ a {
   animation: fade-up 0.45s ease-out both;
 }
 
-/* App shell — viewport-locked; only .shell-content scrolls */
+/* App shell viewport-locked; only .shell-content scrolls */
 .shell-page {
   box-sizing: border-box;
   height: 100dvh;
@@ -221,7 +223,8 @@ a {
 .shell-frame {
   height: 100%;
   border: 1px solid var(--border);
-  border-radius: var(--radius-shell); /* 0 — flush outer chrome */
+  border-radius: var(--radius-shell);
+  /* 0 flush outer chrome */
   background: var(--shell-rail-bg);
   box-shadow: var(--shadow-shell);
 }
@@ -240,7 +243,7 @@ a {
   flex-shrink: 0;
 }
 
-/* Rounded panel wraps only Outlet — header sits above as sibling; TL radius only */
+/* Rounded panel wraps only Outlet header sits above as sibling; TL radius only */
 .shell-viewport {
   min-height: 0;
   margin: 0 0.45rem 0.45rem 0;

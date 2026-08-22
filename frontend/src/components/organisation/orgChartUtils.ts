@@ -26,7 +26,7 @@ export const TASK_STATUS_CYCLE: Record<TaskStatus, TaskStatus> = {
   blocked: 'pending',
 }
 
-/** Walk up the manager chain — true if assigning newManagerId to targetId would cycle. */
+/** Walk up the manager chain true if assigning newManagerId to targetId would cycle. */
 export function wouldCreateCycle(
   people: Array<{ id: string; reporting_manager_id: string | null }>,
   targetId: string,

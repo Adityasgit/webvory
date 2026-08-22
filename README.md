@@ -145,7 +145,7 @@ Redeploy after changing `VITE_API_URL` (inlined at build time).
 - **Authorized JavaScript origins:** `https://webvory.vercel.app`, `http://localhost:3000`
 - **Authorized redirect URIs:** `https://webvory.onrender.com/api/auth/google/callback`, `http://localhost:8000/api/auth/google/callback`
 
-Do **not** register `https://webvory.vercel.app/api/auth/google/callback` — the callback route lives on Render.
+Do **not** register `https://webvory.vercel.app/api/auth/google/callback` the callback route lives on Render.
 
 ## Project layout
 

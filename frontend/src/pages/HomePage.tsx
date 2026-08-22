@@ -5,7 +5,7 @@ export function HomePage() {
         Webvory
       </p>
       <h1 className="font-display text-3xl font-bold tracking-tight text-[var(--text)]">
-        Webvory Task Hub — scaffold
+        Webvory Task Hub scaffold
       </h1>
       <p className="text-[var(--text-muted)]">
         Phase 0 frontend is ready. API proxy targets{' '}

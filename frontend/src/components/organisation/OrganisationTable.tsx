@@ -92,7 +92,7 @@ export function OrganisationTable({ search }: { search: string }) {
                   value={m.reporting_manager_id ?? ''}
                   onChange={(e) => void setManager(m.id, e.target.value)}
                 >
-                  <option value="">— Root —</option>
+                  <option value="">Root —</option>
                   {members
                     .filter((x) => x.id !== m.id)
                     .map((x) => (

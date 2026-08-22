@@ -1,10 +1,10 @@
-# Webvory-EMS — Screens & Navigation
+# Webvory-EMS Screens & Navigation
 
 Screen inventory for **Webvory Task Hub**. Implements the UX for [`requirement.md`](./requirement.md). Use this when building pages, empty/error states, and the Organisation module (Table / Kanban / Chart toggle).
 
 **Product:** Internal Task & Management Dashboard  
 **Shell:** Authenticated SPA with left sidebar + top bar (notifications, theme, user menu)  
-**Visual direction:** Modern internal tool — calm surfaces, clear hierarchy, expressive but restrained typography, subtle depth (not purple-gradient AI defaults). Support light and dark themes.
+**Visual direction:** Modern internal tool calm surfaces, clear hierarchy, expressive but restrained typography, subtle depth (not purple-gradient AI defaults). Support light and dark themes.
 
 ---
 
@@ -94,7 +94,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ## 4. Screen catalog
 
-### 4.1 Login — `/login`
+### 4.1 Login `/login`
 
 **Purpose:** Google sign-in only. Brand-first, single CTA.
 
@@ -119,7 +119,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.2 Dashboard — `/dashboard`
+### 4.2 Dashboard `/dashboard`
 
 **Purpose:** Quick overview of team work (take-home §1).
 
@@ -153,7 +153,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.3 Tasks list — `/tasks`
+### 4.3 Tasks list `/tasks`
 
 **Purpose:** Filterable, searchable, paginated task table (take-home §3).
 
@@ -181,7 +181,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.4 Task detail — `/tasks/:id`
+### 4.4 Task detail `/tasks/:id`
 
 **Purpose:** Full task view, update in place, comments, activity, attachments (take-home §8 + bonuses).
 
@@ -214,7 +214,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.5 Organisation — `/organisation`
+### 4.5 Organisation `/organisation`
 
 **Purpose:** Team organisation hub with three presentations of the same domain: people hierarchy + tasks. **View toggle:** Table | Kanban | Chart (requirement §5).
 
@@ -305,7 +305,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.6 Team / Users — `/users`
+### 4.6 Team / Users `/users`
 
 **Purpose:** List OAuth-provisioned team members; admin changes roles.
 
@@ -320,17 +320,17 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 | State | UI |
 |-------|-----|
 | Loading | Skeleton rows |
-| Empty | “No teammates yet — share the app login link” |
+| Empty | “No teammates yet share the app login link” |
 | Error | Retry |
 | Role save error | Toast + revert select |
 
 **Mobile:** Stacked person cards.
 
-**Note:** No “create user with password”. Users appear after Google login. `POST /api/users` only if needed for seed/demo — not a primary UI form.
+**Note:** No “create user with password”. Users appear after Google login. `POST /api/users` only if needed for seed/demo not a primary UI form.
 
 ---
 
-### 4.7 Insights — `/insights`
+### 4.7 Insights `/insights`
 
 **Purpose:** Display external API (JSONPlaceholder) data (take-home §7).
 
@@ -355,7 +355,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.8 Notifications — drawer (from top bar)
+### 4.8 Notifications drawer (from top bar)
 
 **Purpose:** In-app notifications (bonus).
 
@@ -378,7 +378,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.9 Profile / Settings — `/profile`
+### 4.9 Profile / Settings `/profile`
 
 **Purpose:** Show Google profile; theme preference; logout.
 
@@ -402,7 +402,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ---
 
-### 4.10 Create / Edit task — modal or `/tasks/new`
+### 4.10 Create / Edit task modal or `/tasks/new`
 
 **Purpose:** Shared form for create and edit (from Dashboard, Tasks, Organisation).
 
@@ -420,13 +420,13 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 
 ## 5. Cross-cutting UX rules
 
-1. **Confirm before delete** — tasks and attachments use ConfirmDialog.
-2. **Toasts** — success/failure for mutations (status move, save, upload).
-3. **Badges** — StatusBadge and PriorityBadge color tokens consistent across list, detail, Kanban.
-4. **Empty vs error** — never show a blank white main; always EmptyState or ErrorState.
-5. **Keyboard** — Esc closes modal/drawer; focus trap in Modal.
-6. **Dark mode** — all screens support both themes; test Organisation Kanban columns and Chart node contrast.
-7. **Live data** — Organisation (all three views) and Tasks list subscribe to WS invalidation; avoid full-page flicker.
+1. **Confirm before delete** tasks and attachments use ConfirmDialog.
+2. **Toasts** success/failure for mutations (status move, save, upload).
+3. **Badges** StatusBadge and PriorityBadge color tokens consistent across list, detail, Kanban.
+4. **Empty vs error** never show a blank white main; always EmptyState or ErrorState.
+5. **Keyboard** Esc closes modal/drawer; focus trap in Modal.
+6. **Dark mode** all screens support both themes; test Organisation Kanban columns and Chart node contrast.
+7. **Live data** Organisation (all three views) and Tasks list subscribe to WS invalidation; avoid full-page flicker.
 
 ---
 
@@ -435,7 +435,7 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 | Route | Screen | Auth |
 |-------|--------|------|
 | `/login` | Login (Google only) | Public |
-| `/` | Redirect → `/dashboard` or `/login` | — |
+| `/` | Redirect → `/dashboard` or `/login` | |
 | `/dashboard` | Dashboard | Required |
 | `/organisation` | Organisation (Table / Kanban / Chart toggle) | Required |
 | `/tasks` | Task list | Required |
@@ -451,13 +451,13 @@ Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, Tas
 Define CSS variables for:
 
 - `--bg`, `--surface`, `--border`, `--text`, `--text-muted`
-- `--accent` (single brand accent — avoid default purple-on-white cliché)
+- `--accent` (single brand accent avoid default purple-on-white cliché)
 - Status: pending, in_progress, completed, blocked
 - Priority: low, medium, high, urgent
 
-Typography: purposeful sans for UI (not system-default Inter-only look if avoidable — pick one distinctive but readable family via Google Fonts). Spacing scale consistent with Tailwind.
+Typography: purposeful sans for UI (not system-default Inter-only look if avoidable pick one distinctive but readable family via Google Fonts). Spacing scale consistent with Tailwind.
 
-Motion (2–3 intentional uses): sidebar collapse, drawer slide, Kanban drag overlay / Chart layout settle — no decorative noise.
+Motion (2–3 intentional uses): sidebar collapse, drawer slide, Kanban drag overlay / Chart layout settle no decorative noise.
 
 ---
 
@@ -468,7 +468,7 @@ Motion (2–3 intentional uses): sidebar collapse, drawer slide, Kanban drag ove
 | `KanbanBoard.tsx` | Organisation **Kanban** view |
 | `KanbanColumn.tsx` | Status columns |
 | `KanbanCard.tsx` | TaskCard on board |
-| Employee Active/Inactive columns | **Do not use** — four task statuses |
+| Employee Active/Inactive columns | **Do not use** four task statuses |
 | `OrgChart.tsx` + dagre + React Flow | Organisation **Chart** view |
 | `OrgTreeNode.tsx` / `TaskNode.tsx` / `NodeDetailPanel.tsx` | Person/task nodes + detail panel |
 | Employees table patterns | Organisation **Table** view (users + manager + workload) |

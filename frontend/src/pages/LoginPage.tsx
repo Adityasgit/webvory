@@ -65,13 +65,13 @@ export function LoginPage() {
 
         <a
           href={apiUrl('/api/auth/google')}
-          className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white px-5 py-3.5 text-sm font-semibold text-[#111827] shadow-[0_12px_40px_rgba(0,0,0,0.35)] transition hover:bg-[#f3f4f6]"
+          className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-[#747775]/40 bg-white px-5 py-3.5 text-sm font-semibold !text-[#1f1f1f] shadow-[0_12px_40px_rgba(0,0,0,0.35)] transition hover:bg-[#f8f9fa] hover:shadow-[0_14px_44px_rgba(0,0,0,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070a0e] active:bg-[#f1f3f4]"
         >
           <GoogleIcon />
           Continue with Google
         </a>
         <p className="mt-5 text-center text-xs text-[var(--text-muted)]">
-          No password login — Google OAuth only.
+          No password login Google OAuth only.
         </p>
       </div>
     </main>

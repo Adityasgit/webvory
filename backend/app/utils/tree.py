@@ -1,4 +1,4 @@
-"""Org hierarchy helpers — cycle prevention (PlayStack treeBuilder port)."""
+"""Org hierarchy helpers cycle prevention (PlayStack treeBuilder port)."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-# Webvory-EMS — Implementation Steps
+# Webvory-EMS Implementation Steps
 
 Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase unlocks the next. Specs: [`requirement.md`](./requirement.md), [`screens.md`](./screens.md), [`take-home.md`](./take-home.md).
 
@@ -29,7 +29,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 0 — Repository & tooling
+## Phase 0 Repository & tooling
 
 **Goal:** Empty repo becomes runnable FE/BE placeholders with env templates.
 
@@ -67,7 +67,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 1 — Database & domain core
+## Phase 1 Database & domain core
 
 **Goal:** Migrations + models for all tables in requirement §8 (can soft-wire bonus tables early).
 
@@ -97,7 +97,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 2 — Google OAuth, session, RBAC
+## Phase 2 Google OAuth, session, RBAC
 
 **Goal:** Login/logout/`/me` work; protected API; roles enforced.
 
@@ -133,14 +133,14 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 3 — Tasks API + Tasks UI (core CRUD)
+## Phase 3 Tasks API + Tasks UI (core CRUD)
 
 **Goal:** Take-home §§2–4 and §8 baseline.
 
 ### 3.1 Backend tasks
 
 - [x] Schemas: create, update, list filters, response
-- [x] `GET /api/tasks` — `status`, `priority`, `assignee`, `search`, `sort`, `page`, `limit` (server-side)
+- [x] `GET /api/tasks` `status`, `priority`, `assignee`, `search`, `sort`, `page`, `limit` (server-side)
 - [x] `GET /api/tasks/{id}`
 - [x] `POST /api/tasks`
 - [x] `PUT /api/tasks/{id}` (status change used later by Kanban)
@@ -172,13 +172,13 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 4 — Dashboard + comments
+## Phase 4 Dashboard + comments
 
 **Goal:** Take-home §1 and comments on detail.
 
 ### 4.1 Dashboard API/UI
 
-- [x] `GET /api/dashboard` — total, pending, in_progress, completed, overdue, my tasks
+- [x] `GET /api/dashboard` total, pending, in_progress, completed, overdue, my tasks
 - [x] Dashboard page: six stat cards + my tasks + overdue strip
 - [x] “New task” CTA → create modal
 
@@ -193,7 +193,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 5 — Organisation (Table · Kanban · Chart)
+## Phase 5 Organisation (Table · Kanban · Chart)
 
 **Goal:** One `/organisation` page with view toggle; Kanban DnD; interactive org Chart; Table roster.
 
@@ -206,8 +206,8 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 ### 5.1 Backend hierarchy
 
 - [x] Port cycle check (`wouldCreateCycle`) into Python util
-- [x] `GET /api/organization/tree` — nested users + optional tasks for chart
-- [x] `PATCH /api/users/{id}/manager` — set/clear manager; 400 on cycle; RBAC admin/manager
+- [x] `GET /api/organization/tree` nested users + optional tasks for chart
+- [x] `PATCH /api/users/{id}/manager` set/clear manager; 400 on cycle; RBAC admin/manager
 - [x] `GET /api/users/{id}/reportees`
 - [x] Extend `GET /api/users` with manager name, report counts, open task counts for Table view
 
@@ -242,7 +242,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 6 — Users, Insights, Profile, dark mode
+## Phase 6 Users, Insights, Profile, dark mode
 
 **Goal:** Remaining primary screens from screens.md.
 
@@ -268,7 +268,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 7 — Bonus pack
+## Phase 7 Bonus pack
 
 **Goal:** Finish requirement §7 bonuses not already done.
 
@@ -310,7 +310,7 @@ Ordered build plan for **Webvory Task Hub**. Follow this sequence; each phase un
 
 ---
 
-## Phase 8 — Docker, tests, README, polish
+## Phase 8 Docker, tests, README, polish
 
 **Goal:** Submission-ready deliverables.
 

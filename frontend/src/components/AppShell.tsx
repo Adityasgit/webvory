@@ -162,7 +162,7 @@ export function AppShell() {
   return (
     <div className="shell-page text-[var(--text)]">
       <div className="shell-frame mx-auto flex h-full w-full max-w-[1440px] overflow-hidden">
-        {/* Desktop icon rail — full shell height, does not scroll */}
+        {/* Desktop icon rail full shell height, does not scroll */}
         <aside className="shell-rail hidden h-full w-[4.75rem] shrink-0 flex-col items-center px-2 py-5 md:flex">
           <div className="mb-6 flex flex-col items-center gap-1.5">
             <BrandMark className="h-9 w-9" />
@@ -248,7 +248,7 @@ export function AppShell() {
             </div>
           </header>
 
-          {/* Mobile nav pills — chrome, not inside rounded panel */}
+          {/* Mobile nav pills chrome, not inside rounded panel */}
           <div className="shell-mobile-nav flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-3 md:hidden">
             {[...nav, { to: '/profile', label: 'Profile', icon: <IconProfile /> }].map((item) => (
               <NavLink

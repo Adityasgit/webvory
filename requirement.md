@@ -1,10 +1,10 @@
-# Webvory-EMS — Product Requirements
+# Webvory-EMS Product Requirements
 
 Internal Task & Management Dashboard for the Webvory take-home assignment. This document is the implementation source of truth. It covers every required section in [`take-home.md`](./take-home.md) plus all listed bonus features.
 
 **Product name:** Webvory Task Hub  
 **Auth:** Google OAuth only (no email/password)  
-**Organisation module:** Single page with a **view toggle** — Table · Kanban · Chart (org hierarchy). Kanban from PlayStack `@dnd-kit` board; Chart from PlayStack React Flow + dagre org chart (adapted to users + reporting managers + linked tasks).
+**Organisation module:** Single page with a **view toggle** Table · Kanban · Chart (org hierarchy). Kanban from PlayStack `@dnd-kit` board; Chart from PlayStack React Flow + dagre org chart (adapted to users + reporting managers + linked tasks).
 
 ---
 
@@ -161,13 +161,13 @@ REST APIs with:
 
 ### 4.5 Database (§5)
 
-Minimum entities: Users, Tasks, Comments/Notes — plus bonus entities in §8.
+Minimum entities: Users, Tasks, Comments/Notes plus bonus entities in §8.
 
 ### 4.6 Reusable code (§6)
 
-**Frontend (required components):** Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, TaskCard — plus shared LoadingSpinner, EmptyState, ConfirmDialog.
+**Frontend (required components):** Button, Modal, Input, Select, Table, Pagination, StatusBadge, PriorityBadge, TaskCard plus shared LoadingSpinner, EmptyState, ConfirmDialog.
 
-**Backend layers:** routes, services, models, repositories, schemas, auth utilities — not monolithic files.
+**Backend layers:** routes, services, models, repositories, schemas, auth utilities not monolithic files.
 
 ### 4.7 External API integration (§7)
 
@@ -203,7 +203,7 @@ Inspiration from PlayStack-EMS:
 |------|------------------|--------------------|
 | Kanban | `KanbanBoard` / `KanbanColumn` / `KanbanCard` + `@dnd-kit` | Task status columns (not employee Active/Inactive) |
 | Chart | `OrgChart` / `OrgTreeNode` / `TaskNode` + React Flow + dagre | Users as people nodes; `reporting_manager_id` hierarchy; task nodes linked to assignees |
-| Table | PlayStack employees table patterns | Team/task-oriented table of people (or tasks-in-org context — see below) |
+| Table | PlayStack employees table patterns | Team/task-oriented table of people (or tasks-in-org context see below) |
 
 ### 5.1 Shared chrome
 

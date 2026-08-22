@@ -1,11 +1,10 @@
 import logging
 import secrets
-import sys
 from typing import Annotated
 from urllib.parse import urlencode
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import RedirectResponse
 from itsdangerous import BadSignature, URLSafeTimedSerializer
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,7 +16,7 @@ from app.deps import CurrentUser
 from app.models import User
 from app.schemas.auth import UserOut
 from app.services.auth_service import upsert_google_user
-from app.utils.security import COOKIE_NAME, create_access_token
+from app.utils.security import create_access_token
 
 logger = logging.getLogger(__name__)
 
@@ -30,69 +29,15 @@ OAUTH_STATE_COOKIE = "webvory_oauth_state"
 OAUTH_STATE_MAX_AGE = 600
 
 
-def _supports_native_partitioned() -> bool:
-    # Starlette only passes partitioned= to http.cookies on Python 3.14+.
-    return sys.version_info >= (3, 14)
-
-
-def _use_partitioned(*, partitioned: bool | None = None) -> bool:
+def _oauth_state_cookie_kwargs() -> dict:
     settings = get_settings()
-    return settings.cookie_partitioned if partitioned is None else partitioned
-
-
-def _cookie_kwargs(*, partitioned: bool | None = None) -> dict:
-    """Build Set-Cookie kwargs. Session JWT uses CHIPS when cookie_partitioned is set."""
-    settings = get_settings()
-    kwargs: dict = {
+    return {
         "httponly": True,
         "secure": settings.cookie_secure,
         "samesite": settings.cookie_samesite,
         "path": "/",
+        "max_age": OAUTH_STATE_MAX_AGE,
     }
-    if _use_partitioned(partitioned=partitioned) and _supports_native_partitioned():
-        kwargs["partitioned"] = True
-    return kwargs
-
-
-def _append_partitioned(response: Response, cookie_key: str, *, partitioned: bool | None = None) -> None:
-    """Append Partitioned on Python <3.14 where stdlib cookies lack the attribute."""
-    if _supports_native_partitioned() or not _use_partitioned(partitioned=partitioned):
-        return
-    prefix = f"{cookie_key}="
-    updated: list[tuple[bytes, bytes]] = []
-    for name, value in response.raw_headers:
-        if name.lower() == b"set-cookie":
-            try:
-                text = value.decode("latin-1")
-            except UnicodeDecodeError:
-                updated.append((name, value))
-                continue
-            if text.startswith(prefix) and "partitioned" not in text.lower():
-                value = (text + "; Partitioned").encode("latin-1")
-        updated.append((name, value))
-    response.raw_headers = updated
-
-
-def _set_cookie(
-    response: Response,
-    *,
-    key: str,
-    value: str,
-    max_age: int,
-    partitioned: bool | None = None,
-) -> None:
-    response.set_cookie(
-        key=key,
-        value=value,
-        max_age=max_age,
-        **_cookie_kwargs(partitioned=partitioned),
-    )
-    _append_partitioned(response, key, partitioned=partitioned)
-
-
-def _clear_cookie(response: Response, key: str, *, partitioned: bool | None = None) -> None:
-    """Expire a cookie; delete_cookie() cannot set Partitioned (required for CHIPS)."""
-    _set_cookie(response, key=key, value="", max_age=0, partitioned=partitioned)
 
 
 def _state_serializer() -> URLSafeTimedSerializer:
@@ -113,7 +58,7 @@ def _require_google_config() -> None:
 
 
 @router.get("/google")
-def google_login(response: Response) -> RedirectResponse:
+def google_login() -> RedirectResponse:
     _require_google_config()
     settings = get_settings()
     state = secrets.token_urlsafe(32)
@@ -131,13 +76,7 @@ def google_login(response: Response) -> RedirectResponse:
     }
     url = f"{GOOGLE_AUTH_URL}?{urlencode(params)}"
     redirect = RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
-    _set_cookie(
-        redirect,
-        key=OAUTH_STATE_COOKIE,
-        value=signed_state,
-        max_age=OAUTH_STATE_MAX_AGE,
-        partitioned=False,
-    )
+    redirect.set_cookie(OAUTH_STATE_COOKIE, signed_state, **_oauth_state_cookie_kwargs())
     return redirect
 
 
@@ -241,16 +180,10 @@ def google_callback(
         )
 
     redirect = RedirectResponse(
-        url=f"{frontend}/dashboard",
+        url=f"{frontend}/auth/callback?token={jwt_token}",
         status_code=status.HTTP_302_FOUND,
     )
-    _clear_cookie(redirect, OAUTH_STATE_COOKIE, partitioned=False)
-    _set_cookie(
-        redirect,
-        key=COOKIE_NAME,
-        value=jwt_token,
-        max_age=8 * 60 * 60,
-    )
+    redirect.delete_cookie(OAUTH_STATE_COOKIE, path="/")
     return redirect
 
 
@@ -260,7 +193,5 @@ def me(user: CurrentUser) -> User:
 
 
 @router.post("/logout")
-def logout() -> Response:
-    response = Response(status_code=status.HTTP_204_NO_CONTENT)
-    _clear_cookie(response, COOKIE_NAME)
-    return response
+def logout() -> dict[str, bool]:
+    return {"ok": True}

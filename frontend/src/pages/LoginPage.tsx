@@ -6,10 +6,12 @@ import { apiUrl } from '@/services/api'
 const ERROR_MESSAGES: Record<string, string> = {
   missing_code: 'Google did not return an authorization code.',
   missing_state: 'Login session expired. Try again.',
+  missing_token: 'Sign-in did not return a session token. Try again.',
   invalid_state: 'Invalid login state. Try again.',
   state_mismatch: 'Login state mismatch. Try again.',
   oauth_exchange_failed: 'Could not complete Google sign-in.',
   incomplete_profile: 'Google profile was missing email.',
+  login_failed: 'Sign-in could not be completed. Try again.',
   access_denied: 'Google sign-in was cancelled.',
 }
 

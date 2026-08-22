@@ -26,6 +26,21 @@ type RequestOptions = Omit<RequestInit, 'body'> & {
   skipAuthRedirect?: boolean
 }
 
+/** JWT storage key (localStorage). Matches backend COOKIE_NAME for consistency. */
+export const TOKEN_KEY = 'webvory_token'
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY)
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token)
+}
+
+export function clearToken(): void {
+  localStorage.removeItem(TOKEN_KEY)
+}
+
 /** Host prefix from VITE_API_URL (no trailing slash), or empty for same-origin /api. */
 const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
 
@@ -53,17 +68,19 @@ export function apiWsUrl(path: string): string {
 
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, skipAuthRedirect, headers, ...rest } = options
+  const token = getToken()
   const res = await fetch(apiUrl(path), {
     ...rest,
-    credentials: 'include',
     headers: {
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
   if (res.status === 401 && !skipAuthRedirect) {
+    clearToken()
     if (!window.location.pathname.startsWith('/login')) {
       window.location.assign('/login')
     }

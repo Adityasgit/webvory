@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { api, ApiError, type User } from '@/services/api'
+import { api, clearToken, getToken, type User } from '@/services/api'
 
 type AuthContextValue = {
   user: User | null
@@ -23,21 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
-    const loadMe = async () => api<User>('/api/auth/me', { skipAuthRedirect: true })
+    if (!getToken()) {
+      setUser(null)
+      setLoading(false)
+      return
+    }
 
     try {
-      setUser(await loadMe())
-    } catch (err) {
-      // One retry after OAuth redirect while the partitioned session cookie commits.
-      if (err instanceof ApiError && err.status === 401) {
-        await new Promise((resolve) => setTimeout(resolve, 400))
-        try {
-          setUser(await loadMe())
-          return
-        } catch {
-          /* fall through */
-        }
-      }
+      setUser(await api<User>('/api/auth/me', { skipAuthRedirect: true }))
+    } catch {
+      clearToken()
       setUser(null)
     } finally {
       setLoading(false)
@@ -50,8 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await api<void>('/api/auth/logout', { method: 'POST', skipAuthRedirect: true })
+      await api<{ ok: boolean }>('/api/auth/logout', { method: 'POST', skipAuthRedirect: true })
     } finally {
+      clearToken()
       setUser(null)
       window.location.assign('/login')
     }

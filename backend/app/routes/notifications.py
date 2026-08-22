@@ -117,7 +117,7 @@ def mark_all_read(
 
 @router.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket) -> None:
-    token = websocket.cookies.get(COOKIE_NAME)
+    token = websocket.query_params.get("token") or websocket.cookies.get(COOKIE_NAME)
     if not token:
         await websocket.close(code=4401)
         return

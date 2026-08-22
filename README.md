@@ -113,9 +113,22 @@ Copy the **Render** block from root [`.env.vercel`](./.env.vercel) into the Rend
 | `BACKEND_URL` | `https://webvory.onrender.com` |
 | `FRONTEND_URL` | `https://webvory.vercel.app` (CORS + post-login redirect) |
 | `GOOGLE_REDIRECT_URI` | `https://webvory.onrender.com/api/auth/google/callback` (optional if `BACKEND_URL` is set) |
-| `COOKIE_SECURE` | `true` |
+| `COOKIE_SECURE` | `true` (also sets auth cookie `SameSite=None` for cross-origin requests) |
+| `COOKIE_SAMESITE` | optional; defaults to `none` when `COOKIE_SECURE=true`, else `lax` |
 
 Redeploy after changing env vars.
+
+### Cross-origin cookies (Vercel + Render)
+
+The SPA on `webvory.vercel.app` calls the API on `webvory.onrender.com`. Browsers treat this as cross-site, so the httpOnly JWT cookie must use **`SameSite=None; Secure`** or it will not be sent on `fetch`/`XHR` requests.
+
+Requirements:
+
+- **Render:** `COOKIE_SECURE=true`, `FRONTEND_URL=https://webvory.vercel.app` (exact origin for CORS + credentials)
+- **Vercel:** `VITE_API_URL=https://webvory.onrender.com` (frontend already uses `credentials: 'include'`)
+- **Google OAuth callback** stays on Render (`/api/auth/google/callback`)
+
+If you deploy frontend and API on the **same domain** (e.g. reverse proxy), you can use `COOKIE_SECURE=true` with default `SameSite=Lax` by setting `COOKIE_SAMESITE=lax` explicitly.
 
 ### Vercel (frontend)
 

@@ -25,6 +25,16 @@ OAUTH_STATE_COOKIE = "webvory_oauth_state"
 OAUTH_STATE_MAX_AGE = 600
 
 
+def _cookie_kwargs() -> dict:
+    settings = get_settings()
+    return {
+        "httponly": True,
+        "secure": settings.cookie_secure,
+        "samesite": settings.cookie_samesite,
+        "path": "/",
+    }
+
+
 def _state_serializer() -> URLSafeTimedSerializer:
     settings = get_settings()
     return URLSafeTimedSerializer(settings.jwt_secret, salt="google-oauth-state")
@@ -64,11 +74,8 @@ def google_login(response: Response) -> RedirectResponse:
     redirect.set_cookie(
         key=OAUTH_STATE_COOKIE,
         value=signed_state,
-        httponly=True,
-        secure=settings.cookie_secure,
-        samesite="lax",
         max_age=OAUTH_STATE_MAX_AGE,
-        path="/",
+        **_cookie_kwargs(),
     )
     return redirect
 
@@ -168,15 +175,12 @@ def google_callback(
         url=f"{frontend}/dashboard",
         status_code=status.HTTP_302_FOUND,
     )
-    redirect.delete_cookie(OAUTH_STATE_COOKIE, path="/")
+    redirect.delete_cookie(OAUTH_STATE_COOKIE, **_cookie_kwargs())
     redirect.set_cookie(
         key=COOKIE_NAME,
         value=jwt_token,
-        httponly=True,
-        secure=settings.cookie_secure,
-        samesite="lax",
         max_age=8 * 60 * 60,
-        path="/",
+        **_cookie_kwargs(),
     )
     return redirect
 
@@ -188,13 +192,6 @@ def me(user: CurrentUser) -> User:
 
 @router.post("/logout")
 def logout() -> Response:
-    settings = get_settings()
     response = Response(status_code=status.HTTP_204_NO_CONTENT)
-    response.delete_cookie(
-        key=COOKIE_NAME,
-        path="/",
-        secure=settings.cookie_secure,
-        httponly=True,
-        samesite="lax",
-    )
+    response.delete_cookie(key=COOKIE_NAME, **_cookie_kwargs())
     return response

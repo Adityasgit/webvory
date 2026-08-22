@@ -48,9 +48,13 @@ App: [http://localhost:3000](http://localhost:3000)
 ### Google OAuth
 
 1. Create an OAuth **Web** client in Google Cloud Console  
-2. Authorized JavaScript origin: `http://localhost:3000`  
-3. Redirect URI: `http://localhost:8000/api/auth/google/callback`  
-4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env`
+2. Authorized JavaScript origins:
+   - Local: `http://localhost:3000`
+   - Production: `https://webvory.vercel.app`
+3. Authorized redirect URIs:
+   - Local: `http://localhost:8000/api/auth/google/callback`
+   - Production: `https://webvory.vercel.app/api/auth/google/callback`
+4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env` (local) and in Vercel env / `.env.vercel` (deploy)
 
 There is **no** email/password login.
 
@@ -94,14 +98,19 @@ pytest
 
 This monorepo uses root [`vercel.json`](./vercel.json) with [Vercel Services](https://vercel.com/docs/services): Vite frontend (`web`) + FastAPI (`api`) on one domain. `/api/*` routes to the backend; everything else to the SPA.
 
+**Live:** [https://webvory.vercel.app](https://webvory.vercel.app) — API base is the same host (`https://webvory.vercel.app/api/...`).
+
 1. Import the repo in Vercel and set **Framework Preset** to **Services** (Root Directory = `.`).
-2. Set backend env vars in the Vercel project (no secrets in `vercel.json`):
+2. Copy values from root [`.env.vercel`](./.env.vercel) into the Vercel project env (file is gitignored; create locally from your secrets):
    - `DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-   - `FRONTEND_URL` / `BACKEND_URL` → your Vercel URL (e.g. `https://….vercel.app`)
-   - `GOOGLE_REDIRECT_URI` → `https://….vercel.app/api/auth/google/callback`
+   - `FRONTEND_URL=https://webvory.vercel.app`
+   - `BACKEND_URL=https://webvory.vercel.app`
+   - `GOOGLE_REDIRECT_URI=https://webvory.vercel.app/api/auth/google/callback`
    - `COOKIE_SECURE=true`
-3. In Google Cloud Console, add the production origin and redirect URI.
-4. Deploy (`vercel` / Git push). Local same-origin API remains the default; `VITE_API_URL` is optional and mainly for pointing the frontend at a separate API host.
+3. In Google Cloud Console, add:
+   - JS origin: `https://webvory.vercel.app`
+   - Redirect URI: `https://webvory.vercel.app/api/auth/google/callback`
+4. Deploy (`vercel` / Git push). Same-origin `/api` is the default; `VITE_API_URL` is optional and mainly for a separate API host.
 
 **Note:** FastAPI on Vercel runs as serverless functions. WebSockets and long-lived schedulers (APScheduler) may need a long-running host (Docker / Railway / Render) if those features must be production-critical. Prefer hosting Postgres externally (Neon, Supabase, etc.).
 

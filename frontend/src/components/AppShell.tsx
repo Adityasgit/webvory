@@ -3,7 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { Button } from '@/components/ui'
 import { NotificationDrawer } from '@/components/NotificationDrawer'
-import { api } from '@/services/api'
+import { api, apiWsUrl } from '@/services/api'
 
 type NavItem = {
   to: string
@@ -144,9 +144,7 @@ export function AppShell() {
       .then((list) => setUnread(list.filter((n) => !n.is_read).length))
       .catch(() => setUnread(0))
 
-    const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    // Prefer direct API host for WS (Vite proxy may not upgrade)
-    const wsUrl = `${proto}://localhost:8000/api/ws`
+    const wsUrl = apiWsUrl('/api/ws')
     let ws: WebSocket | null = null
     try {
       ws = new WebSocket(wsUrl)

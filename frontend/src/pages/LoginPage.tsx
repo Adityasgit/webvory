@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Navigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { apiUrl } from '@/services/api'
 
 const ERROR_MESSAGES: Record<string, string> = {
   missing_code: 'Google did not return an authorization code.',
@@ -63,7 +64,7 @@ export function LoginPage() {
         ) : null}
 
         <a
-          href="/api/auth/google"
+          href={apiUrl('/api/auth/google')}
           className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-white/10 bg-white px-5 py-3.5 text-sm font-semibold text-[#111827] shadow-[0_12px_40px_rgba(0,0,0,0.35)] transition hover:bg-[#f3f4f6]"
         >
           <GoogleIcon />

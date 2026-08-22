@@ -26,9 +26,34 @@ type RequestOptions = Omit<RequestInit, 'body'> & {
   skipAuthRedirect?: boolean
 }
 
+/** Host prefix from VITE_API_URL (no trailing slash), or empty for same-origin /api. */
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+
+/** Resolve an API path. Unset VITE_API_URL → relative `/api/...` (Vite proxy / same host). */
+export function apiUrl(path: string): string {
+  if (!path.startsWith('/')) {
+    throw new Error(`API path must start with /: ${path}`)
+  }
+  return API_BASE ? `${API_BASE}${path}` : path
+}
+
+/** WebSocket URL for an API path (Vite dev proxy does not upgrade WS). */
+export function apiWsUrl(path: string): string {
+  if (API_BASE) {
+    const base = new URL(API_BASE)
+    const proto = base.protocol === 'https:' ? 'wss' : 'ws'
+    return `${proto}://${base.host}${path}`
+  }
+  if (import.meta.env.DEV) {
+    return `ws://localhost:8000${path}`
+  }
+  const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
+  return `${proto}://${window.location.host}${path}`
+}
+
 export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { body, skipAuthRedirect, headers, ...rest } = options
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     ...rest,
     credentials: 'include',
     headers: {

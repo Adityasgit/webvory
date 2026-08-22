@@ -23,15 +23,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const refresh = useCallback(async () => {
+    const loadMe = async () => api<User>('/api/auth/me', { skipAuthRedirect: true })
+
     try {
-      const me = await api<User>('/api/auth/me', { skipAuthRedirect: true })
-      setUser(me)
+      setUser(await loadMe())
     } catch (err) {
+      // One retry after OAuth redirect while the partitioned session cookie commits.
       if (err instanceof ApiError && err.status === 401) {
-        setUser(null)
-      } else {
-        setUser(null)
+        await new Promise((resolve) => setTimeout(resolve, 400))
+        try {
+          setUser(await loadMe())
+          return
+        } catch {
+          /* fall through */
+        }
       }
+      setUser(null)
     } finally {
       setLoading(false)
     }

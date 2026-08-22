@@ -25,14 +25,26 @@ OAUTH_STATE_COOKIE = "webvory_oauth_state"
 OAUTH_STATE_MAX_AGE = 600
 
 
-def _cookie_kwargs() -> dict:
+def _cookie_kwargs(*, partitioned: bool | None = None) -> dict:
+    """Build Set-Cookie kwargs. Session JWT uses CHIPS when cookie_partitioned is set."""
     settings = get_settings()
-    return {
+    kwargs: dict = {
         "httponly": True,
         "secure": settings.cookie_secure,
         "samesite": settings.cookie_samesite,
         "path": "/",
     }
+    use_partitioned = (
+        settings.cookie_partitioned if partitioned is None else partitioned
+    )
+    if use_partitioned:
+        kwargs["partitioned"] = True
+    return kwargs
+
+
+def _clear_cookie(response: Response, key: str, *, partitioned: bool | None = None) -> None:
+    """Expire a cookie; delete_cookie() cannot set Partitioned (required for CHIPS)."""
+    response.set_cookie(key=key, value="", max_age=0, **_cookie_kwargs(partitioned=partitioned))
 
 
 def _state_serializer() -> URLSafeTimedSerializer:
@@ -75,7 +87,7 @@ def google_login(response: Response) -> RedirectResponse:
         key=OAUTH_STATE_COOKIE,
         value=signed_state,
         max_age=OAUTH_STATE_MAX_AGE,
-        **_cookie_kwargs(),
+        **_cookie_kwargs(partitioned=False),
     )
     return redirect
 
@@ -175,7 +187,7 @@ def google_callback(
         url=f"{frontend}/dashboard",
         status_code=status.HTTP_302_FOUND,
     )
-    redirect.delete_cookie(OAUTH_STATE_COOKIE, **_cookie_kwargs())
+    _clear_cookie(redirect, OAUTH_STATE_COOKIE, partitioned=False)
     redirect.set_cookie(
         key=COOKIE_NAME,
         value=jwt_token,
@@ -193,5 +205,5 @@ def me(user: CurrentUser) -> User:
 @router.post("/logout")
 def logout() -> Response:
     response = Response(status_code=status.HTTP_204_NO_CONTENT)
-    response.delete_cookie(key=COOKIE_NAME, **_cookie_kwargs())
+    _clear_cookie(response, COOKIE_NAME)
     return response

@@ -113,14 +113,15 @@ Copy the **Render** block from root [`.env.vercel`](./.env.vercel) into the Rend
 | `BACKEND_URL` | `https://webvory.onrender.com` |
 | `FRONTEND_URL` | `https://webvory.vercel.app` (CORS + post-login redirect) |
 | `GOOGLE_REDIRECT_URI` | `https://webvory.onrender.com/api/auth/google/callback` (optional if `BACKEND_URL` is set) |
-| `COOKIE_SECURE` | `true` (also sets auth cookie `SameSite=None` for cross-origin requests) |
+| `COOKIE_SECURE` | `true` (also sets auth cookie `SameSite=None; Secure; Partitioned` for cross-origin requests) |
 | `COOKIE_SAMESITE` | optional; defaults to `none` when `COOKIE_SECURE=true`, else `lax` |
+| `COOKIE_PARTITIONED` | optional; defaults to `true` when `COOKIE_SECURE=true` (CHIPS for Chrome) |
 
 Redeploy after changing env vars.
 
 ### Cross-origin cookies (Vercel + Render)
 
-The SPA on `webvory.vercel.app` calls the API on `webvory.onrender.com`. Browsers treat this as cross-site, so the httpOnly JWT cookie must use **`SameSite=None; Secure`** or it will not be sent on `fetch`/`XHR` requests.
+The SPA on `webvory.vercel.app` calls the API on `webvory.onrender.com`. Browsers treat this as cross-site, so the httpOnly JWT cookie must use **`SameSite=None; Secure; Partitioned`** or Chrome will not send it on credentialed `fetch` requests.
 
 Requirements:
 

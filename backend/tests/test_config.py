@@ -26,8 +26,18 @@ def test_google_redirect_corrects_frontend_host_misconfiguration():
 
 
 def test_cookie_samesite_none_when_secure():
-    settings = Settings(cookie_secure=True)
+    settings = Settings(cookie_secure=True, google_redirect_uri="")
     assert settings.cookie_samesite == "none"
+
+
+def test_cookie_partitioned_when_secure():
+    settings = Settings(cookie_secure=True, google_redirect_uri="")
+    assert settings.cookie_partitioned is True
+
+
+def test_cookie_partitioned_off_when_not_secure():
+    settings = Settings(cookie_secure=False, google_redirect_uri="")
+    assert settings.cookie_partitioned is False
 
 
 def test_cookie_samesite_lax_when_not_secure():

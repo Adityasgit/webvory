@@ -90,12 +90,30 @@ cd backend
 pytest
 ```
 
+## Deploy (Vercel)
+
+This monorepo uses root [`vercel.json`](./vercel.json) with [Vercel Services](https://vercel.com/docs/services): Vite frontend (`web`) + FastAPI (`api`) on one domain. `/api/*` routes to the backend; everything else to the SPA.
+
+1. Import the repo in Vercel and set **Framework Preset** to **Services** (Root Directory = `.`).
+2. Set backend env vars in the Vercel project (no secrets in `vercel.json`):
+   - `DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+   - `FRONTEND_URL` / `BACKEND_URL` → your Vercel URL (e.g. `https://….vercel.app`)
+   - `GOOGLE_REDIRECT_URI` → `https://….vercel.app/api/auth/google/callback`
+   - `COOKIE_SECURE=true`
+3. In Google Cloud Console, add the production origin and redirect URI.
+4. Deploy (`vercel` / Git push). Local same-origin API remains the default; `VITE_API_URL` is optional and mainly for pointing the frontend at a separate API host.
+
+**Note:** FastAPI on Vercel runs as serverless functions. WebSockets and long-lived schedulers (APScheduler) may need a long-running host (Docker / Railway / Render) if those features must be production-critical. Prefer hosting Postgres externally (Neon, Supabase, etc.).
+
+**Frontend-only alternative:** set Root Directory to `frontend`, omit Services, and either rewrite `/api` to an external backend URL or set `VITE_API_URL` at build time and allow that origin in backend CORS (`FRONTEND_URL`).
+
 ## Project layout
 
 ```
 Webvory-EMS/
 ├── frontend/
 ├── backend/
+├── vercel.json
 ├── docker-compose.yml
 ├── requirement.md
 ├── screens.md

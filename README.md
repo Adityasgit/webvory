@@ -51,10 +51,10 @@ App: [http://localhost:3000](http://localhost:3000)
 2. Authorized JavaScript origins:
    - Local: `http://localhost:3000`
    - Production: `https://webvory.vercel.app`
-3. Authorized redirect URIs:
+3. Authorized redirect URIs (OAuth callback hits the **API** host):
    - Local: `http://localhost:8000/api/auth/google/callback`
-   - Production: `https://webvory.vercel.app/api/auth/google/callback`
-4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env` (local) and in Vercel env / `.env.vercel` (deploy)
+   - Production: `https://webvory.onrender.com/api/auth/google/callback`
+4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env` (local) and in **Render** env (production). See [`.env.vercel`](./.env.vercel) for the full production template.
 
 There is **no** email/password login.
 
@@ -94,27 +94,45 @@ cd backend
 pytest
 ```
 
-## Deploy (Vercel)
+## Deploy (production)
 
-This monorepo uses root [`vercel.json`](./vercel.json) with [Vercel Services](https://vercel.com/docs/services): Vite frontend (`web`) + FastAPI (`api`) on one domain. `/api/*` routes to the backend; everything else to the SPA.
+**Live:** Frontend [https://webvory.vercel.app](https://webvory.vercel.app) · API [https://webvory.onrender.com](https://webvory.onrender.com)
 
-**Live:** [https://webvory.vercel.app](https://webvory.vercel.app) — API base is the same host (`https://webvory.vercel.app/api/...`).
+Split hosting: Vite SPA on Vercel, FastAPI on Render. The frontend calls the API via `VITE_API_URL`; Google OAuth starts and completes on Render.
 
-1. Import the repo in Vercel and set **Framework Preset** to **Services** (Root Directory = `.`).
-2. Copy values from root [`.env.vercel`](./.env.vercel) into the Vercel project env (file is gitignored; create locally from your secrets):
-   - `DATABASE_URL`, `JWT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-   - `FRONTEND_URL=https://webvory.vercel.app`
-   - `BACKEND_URL=https://webvory.vercel.app`
-   - `GOOGLE_REDIRECT_URI=https://webvory.vercel.app/api/auth/google/callback`
-   - `COOKIE_SECURE=true`
-3. In Google Cloud Console, add:
-   - JS origin: `https://webvory.vercel.app`
-   - Redirect URI: `https://webvory.vercel.app/api/auth/google/callback`
-4. Deploy (`vercel` / Git push). Same-origin `/api` is the default; `VITE_API_URL` is optional and mainly for a separate API host.
+### Render (backend)
 
-**Note:** FastAPI on Vercel runs as serverless functions. WebSockets and long-lived schedulers (APScheduler) may need a long-running host (Docker / Railway / Render) if those features must be production-critical. Prefer hosting Postgres externally (Neon, Supabase, etc.).
+Copy the **Render** block from root [`.env.vercel`](./.env.vercel) into the Render service **Environment**:
 
-**Frontend-only alternative:** set Root Directory to `frontend`, omit Services, and either rewrite `/api` to an external backend URL or set `VITE_API_URL` at build time and allow that origin in backend CORS (`FRONTEND_URL`).
+| Variable | Example |
+|----------|---------|
+| `DATABASE_URL` | Neon Postgres URL |
+| `JWT_SECRET` | long random string |
+| `GOOGLE_CLIENT_ID` | from Google Cloud Console |
+| `GOOGLE_CLIENT_SECRET` | from Google Cloud Console |
+| `BACKEND_URL` | `https://webvory.onrender.com` |
+| `FRONTEND_URL` | `https://webvory.vercel.app` (CORS + post-login redirect) |
+| `GOOGLE_REDIRECT_URI` | `https://webvory.onrender.com/api/auth/google/callback` (optional if `BACKEND_URL` is set) |
+| `COOKIE_SECURE` | `true` |
+
+Redeploy after changing env vars.
+
+### Vercel (frontend)
+
+Set **Root Directory** to `frontend`. Build env:
+
+| Variable | Value |
+|----------|-------|
+| `VITE_API_URL` | `https://webvory.onrender.com` |
+
+Redeploy after changing `VITE_API_URL` (inlined at build time).
+
+### Google Cloud Console
+
+- **Authorized JavaScript origins:** `https://webvory.vercel.app`, `http://localhost:3000`
+- **Authorized redirect URIs:** `https://webvory.onrender.com/api/auth/google/callback`, `http://localhost:8000/api/auth/google/callback`
+
+Do **not** register `https://webvory.vercel.app/api/auth/google/callback` — the callback route lives on Render.
 
 ## Project layout
 
@@ -122,7 +140,6 @@ This monorepo uses root [`vercel.json`](./vercel.json) with [Vercel Services](ht
 Webvory-EMS/
 ├── frontend/
 ├── backend/
-├── vercel.json
 ├── docker-compose.yml
 ├── requirement.md
 ├── screens.md

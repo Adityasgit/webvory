@@ -37,7 +37,7 @@ def _require_google_config() -> None:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=(
                 "Google OAuth is not configured. Set GOOGLE_CLIENT_ID and "
-                "GOOGLE_CLIENT_SECRET in backend/.env"
+                "GOOGLE_CLIENT_SECRET in backend/.env (local) or Render env (production)."
             ),
         )
 
